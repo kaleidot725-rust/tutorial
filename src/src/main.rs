@@ -56,4 +56,48 @@ fn main() {
     }
     println!("-------------");
 
+    // 定数
+    println!("NO5 ---------");
+    {
+        const PI: f32 = 3.14159;
+        println!("円周率 {}", PI);
+        println!("-------------");
+    }
+    println!("-------------");
+
+    // 配列
+    println!("NO6 ---------");
+    {
+        let nums: [i32; 3] = [1, 2, 3];
+        println!("{:?}", nums);
+        println!("{}", nums[1]);
+    }
+    println!("-------------");
+
+    // 配列
+    println!("NO7 ---------");
+    {
+        fn add(x: i32, y: i32) -> i32 {
+            return x + y;
+        }
+
+        println!("{}", add(42, 13));
+
+        fn swap(x: i32, y: i32) -> (i32, i32) {
+            return (y, x);
+        }
+
+        let result = swap(123, 321);
+        println!("{} {}", result.0, result.1);
+
+        let (a, b) = swap(result.0, result.1);
+        println!("{} {}", a, b);
+
+        fn make_nothing() -> () {
+            return ();
+        }
+        let a = make_nothing();
+        println!("a の値: {:?}", a);
+    }
+    println!("-------------");
 }
