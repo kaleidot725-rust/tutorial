@@ -100,4 +100,18 @@ fn main() {
         println!("a の値: {:?}", a);
     }
     println!("-------------");
+
+    println("No8 ----------");
+    {
+         struct SeaCreature {
+             animal_type: String,
+             name: String,
+             arms: i32,
+             legs: i32,
+             weapon: String
+         }
+
+
+    }
+    println!("-------------");
 }
