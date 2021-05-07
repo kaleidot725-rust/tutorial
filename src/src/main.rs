@@ -103,15 +103,19 @@ fn main() {
 
     println("No8 ----------");
     {
-         struct SeaCreature {
-             animal_type: String,
-             name: String,
-             arms: i32,
-             legs: i32,
-             weapon: String
-         }
+        struct SeaCreature {
+            animal_type: String,
+            name: String,
+            arms: i32,
+            legs: i32,
+            weapon: String
+        }
 
+        // スタティックメソッド
+        let s = String::from("Hello world!");
 
+        // インスタンスメソッド
+        println!("{} is {} characters long.", s, s.len());
     }
     println!("-------------");
 }
