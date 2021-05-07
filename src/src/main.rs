@@ -101,7 +101,8 @@ fn main() {
     }
     println!("-------------");
 
-    println("No8 ----------");
+    // 構造体
+    println!("No8 ----------");
     {
         struct SeaCreature {
             animal_type: String,
