@@ -228,8 +228,167 @@ fn main() {
                     }
                     _ => println!("ferris is a  crab with some other weapon")
                 }
-            },
+            }
             _ => println!("ferris is some other animal"),
+        }
+    }
+    println!("-------------");
+
+    // ジェネリック型
+    println!("No11 ----------");
+    {
+        struct BagOfHolding<T> {
+            item: T,
+        }
+
+        // 明示的に型を宣言しても OK
+        let i32_bag = BagOfHolding::<i32> { item: 42 };
+        let bool_bag = BagOfHolding::<bool> { item: true };
+
+        // 型推論も有効なので省略しても OK
+        let float_bag = BagOfHolding { item: 3.14 };
+
+        // BagOfHolding を入れても OK
+        let bag_in_bag = BagOfHolding {
+            item: BagOfHolding { item: "boom!" },
+        };
+
+        println!(
+            "{} {} {} {}",
+            i32_bag.item, bool_bag.item, float_bag.item, bag_in_bag.item.item
+        );
+    }
+    println!("-------------");
+
+    // 値がないことを表現したい
+    println!("No12 ----------");
+    {
+        enum Item {
+            Inventory(String),
+            None, // でもこれだと毎回 None を定義しなければならない
+        }
+
+        struct BagOfHolding {
+            item: Item,
+        }
+    }
+    println!("-------------");
+
+    // Option
+    println!("No13 ----------");
+    {
+        struct BagOfHolding<T> {
+            item: Option<T>,
+        }
+
+        let i32_bag = BagOfHolding::<i32> { item: None };
+        if i32_bag.item.is_none() {
+            println!("バッグには何もない!")
+        } else {
+            println!("バッグには何かある!")
+        }
+
+        let bool_bag = BagOfHolding::<u32> { item: Some(32)};
+        if bool_bag.item.is_none() {
+            println!("バッグには整数がない!")
+        } else {
+            println!("バッグには整数があった({})!",bool_bag.item.unwrap())
+        }
+    }
+    println!("-------------");
+
+    // Result
+    println!("No14 ----------");
+    {
+       fn do_something_that_might_fail(i:i32) -> Result<f32, String> {
+           if i == 42 {
+               Ok(13.0)
+           } else {
+               Err(String::from("正しい値ではありません"))
+           }
+       }
+
+        let success = do_something_that_might_fail(42);
+        match success {
+            Ok(v) => println!("発見 {}", v),
+            Err(e) => println!("Error: {}", e)
+        }
+
+        let failed = do_something_that_might_fail(12);
+        match failed {
+            Ok(v) => println!("発見 {}", v),
+            Err(e) => println!("Error: {}", e)
+        }
+    }
+    println!("-------------");
+
+    // ?演算子
+    println!("No15 ----------");
+    {
+        fn do_something_that_might_fail(i:i32) -> Result<f32, String> {
+            if i == 42 {
+                Ok(13.0)
+            } else {
+                Err(String::from("正しい値ではありません"))
+            }
+        }
+
+        fn execute() -> Result<(), String>{
+            let v = do_something_that_might_fail(12)?;
+            println!("発見{}", v);
+            Ok(())
+        }
+
+        let result = execute();
+        match result {
+            Ok(()) => println!("成功"),
+            Err(e) => println!("失敗{}", e)
+        }
+    }
+    println!("-------------");
+
+    // Option/Result unwrap で値を取得できる
+    println!("No15 ----------");
+    {
+        fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+            if i == 42 {
+                Ok(13.0)
+            } else {
+                Err(String::from("正しい値ではありません"))
+            }
+        }
+
+        let v = do_something_that_might_fail(42).unwrap();
+        println!("発見{}", v);
+
+        // unrap できないのでエラーになる
+        // let v = do_something_that_might_fail(1).unwrap();
+        // println!("発見{}", v);
+    }
+    println!("-------------");
+
+    // ベクタ型
+    println!("No16 ----------");
+    {
+        let mut i32_vec = Vec::<i32>::new();
+        i32_vec.push(1);
+        i32_vec.push(2);
+        i32_vec.push(3);
+        for i in i32_vec.iter() {
+            println!("{}", i);
+        }
+
+        let mut float_vec = Vec::new();
+        float_vec.push(1.3);
+        float_vec.push(2.3);
+        float_vec.push(3.4);
+        for f in float_vec.iter() {
+            println!("{}", f);
+        }
+
+        let string_vec = vec![String::from("Hello"), String::from("World")];
+        for word in string_vec.iter() {
+            println!("{}", word);
         }
     }
     println!("-------------");
