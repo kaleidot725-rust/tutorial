@@ -288,11 +288,11 @@ fn main() {
             println!("バッグには何かある!")
         }
 
-        let bool_bag = BagOfHolding::<u32> { item: Some(32)};
+        let bool_bag = BagOfHolding::<u32> { item: Some(32) };
         if bool_bag.item.is_none() {
             println!("バッグには整数がない!")
         } else {
-            println!("バッグには整数があった({})!",bool_bag.item.unwrap())
+            println!("バッグには整数があった({})!", bool_bag.item.unwrap())
         }
     }
     println!("-------------");
@@ -300,13 +300,13 @@ fn main() {
     // Result
     println!("No14 ----------");
     {
-       fn do_something_that_might_fail(i:i32) -> Result<f32, String> {
-           if i == 42 {
-               Ok(13.0)
-           } else {
-               Err(String::from("正しい値ではありません"))
-           }
-       }
+        fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
+            if i == 42 {
+                Ok(13.0)
+            } else {
+                Err(String::from("正しい値ではありません"))
+            }
+        }
 
         let success = do_something_that_might_fail(42);
         match success {
@@ -325,7 +325,7 @@ fn main() {
     // ?演算子
     println!("No15 ----------");
     {
-        fn do_something_that_might_fail(i:i32) -> Result<f32, String> {
+        fn do_something_that_might_fail(i: i32) -> Result<f32, String> {
             if i == 42 {
                 Ok(13.0)
             } else {
@@ -333,7 +333,7 @@ fn main() {
             }
         }
 
-        fn execute() -> Result<(), String>{
+        fn execute() -> Result<(), String> {
             let v = do_something_that_might_fail(12)?;
             println!("発見{}", v);
             Ok(())
@@ -390,6 +390,223 @@ fn main() {
         for word in string_vec.iter() {
             println!("{}", word);
         }
+    }
+    println!("-------------");
+
+    // 所有権
+    println!("No17 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 13 };
+
+        println!("{}", foo_a.x);
+        println!("{}", foo_b.x);
+
+        // foo_a.x と foo_b.x がドロップする
+    }
+    println!("-------------");
+
+    // 所有権が移動する
+    println!("No18 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        fn do_something(f: Foo) {
+            println!("{}", f.x);
+            // f はここでドロップ
+        }
+
+        // foo の所有権は do_something に移動
+        let foo = Foo { x: 42 };
+        do_something(foo);
+        // println!("{}", foo.x); // foo は使えなくなる コンパイルエラーがでる
+    }
+    println!("-------------");
+
+    // 所有権が移動する、関数から戻す
+    println!("No19 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        fn do_something() -> Foo {
+            Foo { x: 42 }
+            // 所有権は外に移動
+        }
+
+        // foo の所有権は do_something に移動
+        let foo = do_something();
+        println!("{}", foo.x);
+    }
+    println!("-------------");
+
+    // 参照
+    println!("No20 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        let foo = Foo { x: 42 };
+        let f = &foo;
+        println!("{}", f.x);
+
+        // 参照も他のリソースと同様にドロップされる
+    }
+    println!("-------------");
+
+    // 参照による所有権の可変な借用
+    println!("No21 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        fn do_something(f: Foo) {
+            println!("{}", f.x);
+        }
+
+        let mut foo = Foo { x: 42 };
+        let f = &mut foo;
+
+        f.x = 13;
+        println!("{}", foo.x);
+
+        foo.x = 7;
+
+        do_something(foo);
+    }
+    println!("-------------");
+
+    // 参照外し
+    println!("No22 ----------");
+    {
+        let mut foo = 42;
+        let f = &mut foo;
+        let bar = *f;
+
+        *f = 13;
+
+        println!("{}", bar);
+        println!("{}", foo);
+    }
+    println!("-------------");
+
+    // 借用したデータの受け渡し
+    println!("No22 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        fn do_something(f: &mut Foo) {
+            f.x += 1;
+        }
+
+        let mut foo = Foo { x: 42 };
+        do_something(&mut foo);
+        do_something(&mut foo);
+    }
+    println!("-------------");
+
+    // 参照の参照
+    println!("No23 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        fn do_something(a: &Foo) -> &i32 {
+            return &a.x;
+        }
+
+        let mut foo = Foo { x: 42 };
+        let x = &mut foo.x;
+        *x  = 13;
+
+        let y = do_something(&foo);
+        println!("{}", y);
+    }
+    println!("-------------");
+
+    // 明示的なライフタイム
+    println!("No24 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        fn do_something<'a>(foo: &'a Foo) -> &'a i32 {
+            return &foo.x;
+        }
+
+        let mut foo = Foo { x: 42};
+        let x = &mut foo.x;
+        *x = 13;
+
+        let y = do_something(&foo);
+        println!("{}", y);
+    }
+    println!("-------------");
+
+    // 複数のライフタイム
+    println!("No24 ----------");
+    {
+        struct Foo {
+            x: i32,
+        }
+
+        fn do_something<'a, 'b>(foo_a: &'a Foo, foo_b: &'b Foo) -> &'b i32 {
+            println!("{}", foo_a.x);
+            println!("{}", foo_b.x);
+            return &foo_b.x;
+        }
+
+        let foo_a = Foo { x: 42 };
+        let foo_b = Foo { x: 12 };
+        let x = do_something(&foo_a, &foo_b);
+        println!("{}", x);
+    }
+    println!("-------------");
+
+    // スタティックライフタイム
+    println!("No25 ----------");
+    {
+        static PI: f64 = 3.1415;
+
+        static mut SECRET: &'static str = "swordfish";
+
+        let msg: &'static str = "Hello World!";
+        let p: &'static f64 = &PI;
+        println!("{} {}", msg, p);
+
+        unsafe {
+            SECRET = "abracadabra";
+            println!("{}", SECRET);
+        }
+    }
+    println!("-------------");
+
+    // データ型のライフタイム
+    println!("No26 ----------");
+    {
+        struct Foo<'a> {
+            i:&'a i32
+        }
+
+        let x = 42;
+        let foo = Foo {
+            i: &x
+        };
+
+        println!("{}", foo.i);
     }
     println!("-------------");
 }
